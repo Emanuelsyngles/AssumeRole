@@ -6,13 +6,13 @@ module "iam_policy" {
     policy_statements = [
         {
             Effect   = "Allow"
-            action   = ["s3:ListBucket"]
+            Action   = ["s3:ListBucket"]
             Resource = ["arn:aws:s3:::example-bucket-dev"]
         },
         {
         Effect   = "Allow"
-        action   = ["s3:GetObject"]
-        resource = ["arn:aws:s3:::example-bucket-dev/*"]
+        Action   = ["s3:GetObject"]
+        Resource = ["arn:aws:s3:::example-bucket-dev/*"]
         }
     ]
 }
@@ -22,15 +22,20 @@ module "iam_role" {
   name              = var.name
   assume_role_policy = {
     Version = "2012-10-17"
-    statement = [
+    Statement = [
         {
           Effect = "Allow"
-          principal = {
-            service = "ec2.amazonaws.com"
+          Principal = {
+          Service = "ec2.amazonaws.com"
           }
-          action = "sts:assumerole"
+          Action = "sts:AssumeRole"
         }
     ]
   }
-  policy_arn      = module.iam_policy
+  policy_arn      = module.iam_policy.arn
+
+  tags = {
+    Environment = "dev"
+    ManagedBy    = "Terraform"
+  }
 }
